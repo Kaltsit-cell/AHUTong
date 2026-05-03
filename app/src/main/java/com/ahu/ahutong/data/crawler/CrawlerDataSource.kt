@@ -6,12 +6,14 @@ import com.ahu.ahutong.data.base.BaseDataSource
 import com.ahu.ahutong.data.crawler.api.adwmh.AdwmhApi
 import com.ahu.ahutong.data.crawler.api.jwxt.JwxtApi
 import com.ahu.ahutong.data.crawler.api.ycard.YcardApi
+import com.ahu.ahutong.data.crawler.model.adwnh.AllCampus
+import com.ahu.ahutong.data.crawler.model.adwnh.AllLostFoundType
+import com.ahu.ahutong.data.crawler.model.adwnh.LostFoundResponse
 import com.ahu.ahutong.data.crawler.model.jwxt.CurrentSemester
 import com.ahu.ahutong.data.crawler.model.ycard.CardInfo
 import com.ahu.ahutong.data.crawler.model.ycard.RequestBody
 import com.ahu.ahutong.data.crawler.utils.GpaRankHtmlParser
 import com.ahu.ahutong.data.dao.AHUCache
-import com.ahu.ahutong.data.mock_server.MockServer
 import com.ahu.ahutong.data.model.BathRoom
 import com.ahu.ahutong.data.model.BathroomTelInfo
 import com.ahu.ahutong.data.model.Card
@@ -243,7 +245,71 @@ class CrawlerDataSource : BaseDataSource {
             .replace(Regex("'"), "\"")                // 单引号 → 双引号
     }
 
+    override suspend fun getAllCampus(): AHUResponse<AllCampus> {
+        val response = AHUResponse<AllCampus>()
+        try {
+            // 直接请求 JSON 接口
+            val campusList = AdwmhApi.API.getAllcampus()
 
+            // 封装返回
+            response.code = 0
+            response.msg = "success"
+            response.data = campusList
+            return response
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            response.code = -1
+            response.msg = "解析校区列表失败：${e.message}"
+            return response
+        }
+    }
+
+    override suspend fun getAllLostFoundType(): AHUResponse<AllLostFoundType> {
+        val response = AHUResponse<AllLostFoundType>()
+        try {
+            // 直接请求 JSON 接口
+            val typeList = AdwmhApi.API.getAlllostfoundtype()
+            // 封装返回
+            response.code = 0
+            response.msg = "success"
+            response.data = typeList
+            return response
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            response.code = -1
+            response.msg = "解析失败：${e.message}"
+            return response
+        }
+    }
+
+    override suspend fun getLostFoundList(
+        pageNo: Int,
+        pageSize: Int,
+        state: Int
+    ): AHUResponse<LostFoundResponse> {
+        val response = AHUResponse<LostFoundResponse>()
+        try {
+            // 直接请求 JSON 接口
+            val List = AdwmhApi.API.getLostFoundList(
+                pageNo,
+                pageSize,
+                state
+            )
+            // 封装返回
+            response.code = 0
+            response.msg = "success"
+            response.data = List
+            return response
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            response.code = -1
+            response.msg = "解析失败：${e.message}"
+            return response
+        }
+    }
     override suspend fun getCardMoney(): AHUResponse<Card> {
         val card = Card()
         card.balance = AdwmhApi.API.getBalance().`object`

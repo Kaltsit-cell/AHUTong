@@ -1,9 +1,12 @@
 package com.ahu.ahutong.data.crawler.api.adwmh
 
 import com.ahu.ahutong.data.crawler.manager.CookieManager
+import com.ahu.ahutong.data.crawler.model.adwnh.AllCampus
+import com.ahu.ahutong.data.crawler.model.adwnh.AllLostFoundType
 import com.ahu.ahutong.data.crawler.model.adwnh.Balance
 import com.ahu.ahutong.data.crawler.model.adwnh.Captcha
 import com.ahu.ahutong.data.crawler.model.adwnh.Info
+import com.ahu.ahutong.data.crawler.model.adwnh.LostFoundResponse
 import com.ahu.ahutong.data.crawler.model.adwnh.QRcode
 import com.ahu.ahutong.data.crawler.net.AutoLoginInterceptor
 import com.ahu.ahutong.data.crawler.net.TokenAuthenticator
@@ -19,6 +22,7 @@ import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
+import retrofit2.http.Query
 import retrofit2.http.Url
 
 interface AdwmhApi {
@@ -41,6 +45,19 @@ interface AdwmhApi {
 
     @GET("/xzxcard/qrcode")
     suspend fun getQrcode(): QRcode
+
+    @GET("/lostfound/campus/all")
+    suspend fun getAllcampus(): AllCampus
+
+    @GET("/lostfound/type/all")
+    suspend fun getAlllostfoundtype(): AllLostFoundType
+
+    @GET("/lostfound/all")
+    suspend fun getLostFoundList(
+        @Query("pageNo") pageNo: Int,
+        @Query("pageSize") pageSize: Int,
+        @Query("state") state: Int
+    ): LostFoundResponse//state=1是招领物品，state=2是寻找物品
 
     @POST
     @Multipart

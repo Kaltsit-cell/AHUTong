@@ -6,7 +6,10 @@ import com.ahu.ahutong.data.crawler.CrawlerDataSource
 import com.ahu.ahutong.data.crawler.api.adwmh.AdwmhApi
 import com.ahu.ahutong.data.crawler.api.jwxt.JwxtApi
 import com.ahu.ahutong.data.crawler.configs.Constants
+import com.ahu.ahutong.data.crawler.model.adwnh.AllCampus
+import com.ahu.ahutong.data.crawler.model.adwnh.AllLostFoundType
 import com.ahu.ahutong.data.crawler.model.adwnh.Info
+import com.ahu.ahutong.data.crawler.model.adwnh.LostFoundResponse
 import com.ahu.ahutong.data.crawler.model.ycard.CardInfo
 import com.ahu.ahutong.data.crawler.model.ycard.RequestBody
 import com.ahu.ahutong.data.dao.AHUCache
@@ -348,5 +351,28 @@ object AHURepository {
     suspend fun getGpaRankInfo(): AHUResponse<GpaRankInfo> =
         withContext(Dispatchers.IO) {
             dataSource.getGpaRankFromHtml()
+        }
+
+    suspend fun getAllCampus(): AHUResponse<AllCampus> =
+        withContext(Dispatchers.IO) {
+            dataSource.getAllCampus()
+        }
+
+    suspend fun getAllLostFoundType(): AHUResponse<AllLostFoundType> =
+        withContext(Dispatchers.IO) {
+            dataSource.getAllLostFoundType()
+        }
+
+    suspend fun getLostFoundList(
+        pageNo: Int,
+        pageSize: Int,
+        state: Int
+    ): AHUResponse<LostFoundResponse> =
+        withContext(Dispatchers.IO) {
+            dataSource.getLostFoundList(
+                pageNo,
+                pageSize,
+                state
+            )
         }
 }
