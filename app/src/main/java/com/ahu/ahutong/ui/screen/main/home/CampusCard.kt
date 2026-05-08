@@ -24,11 +24,17 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Fullscreen
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -249,6 +255,7 @@ private fun QRcodeView(balance: Double, onBack: () -> Unit) {
     val discoveryViewModel: DiscoveryViewModel = hiltViewModel()
     val qrcodeBitmap by discoveryViewModel.qrcode.collectAsState()
     val finished by discoveryViewModel.state.collectAsState()
+
     var showFullScreen by remember {
         mutableStateOf(false)
     }
@@ -268,7 +275,8 @@ private fun QRcodeView(balance: Double, onBack: () -> Unit) {
             val layoutParams = window?.attributes
 
             // 保存原始亮度
-            val originalBrightness = layoutParams?.screenBrightness ?: -1f
+            val originalBrightness =
+                layoutParams?.screenBrightness ?: -1f
 
             // 设置最高亮度
             layoutParams?.screenBrightness = 1f
@@ -276,7 +284,8 @@ private fun QRcodeView(balance: Double, onBack: () -> Unit) {
 
             onDispose {
                 // 恢复原始亮度
-                layoutParams?.screenBrightness = originalBrightness
+                layoutParams?.screenBrightness =
+                    originalBrightness
                 window?.attributes = layoutParams
             }
         }
@@ -286,12 +295,55 @@ private fun QRcodeView(balance: Double, onBack: () -> Unit) {
         modifier = Modifier
             .clip(SmoothRoundedCornerShape(24.dp))
             .background(100.n1 withNight 20.n1)
-            .padding(24.dp),
+            .padding(
+                start = 20.dp,
+                top = 12.dp,
+                end = 20.dp,
+                bottom = 20.dp
+                ),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("¥ $balance")
-        Spacer(Modifier.height(16.dp))
 
+        // 顶部工具栏：左返回，中余额，右放大
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            // 左侧返回
+            IconButton(
+                onClick = {
+                    onBack()
+                },
+                modifier = Modifier.align(Alignment.CenterStart)
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "返回"
+                )
+            }
+
+            // 中间余额（绝对居中）
+            Text(
+                text = "¥ $balance",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.align(Alignment.Center)
+            )
+
+            // 右侧全屏
+            IconButton(
+                onClick = {
+                    discoveryViewModel.loadQrCode()
+                    showFullScreen = true
+                },
+                modifier = Modifier.align(Alignment.CenterEnd)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Fullscreen,
+                    contentDescription = "放大"
+                )
+            }
+        }
         if (finished) {
             qrcodeBitmap?.let {
                 Box(
@@ -311,38 +363,14 @@ private fun QRcodeView(balance: Double, onBack: () -> Unit) {
                                 1.dp,
                                 Color.Gray,
                                 SmoothRoundedCornerShape(8.dp)
-                            ),
+                            )
                     )
                 }
             } ?: Text(
                 text = "加载失败"
             )
-
         } else {
             CircularProgressIndicator()
-        }
-
-        Spacer(Modifier.height(24.dp))
-
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(24.dp)
-        ) {
-            Box(
-                modifier = Modifier.clickable {
-                    discoveryViewModel.loadQrCode()
-                    showFullScreen = true
-                }
-            ) {
-                Text("放大")
-            }
-
-            Box(
-                modifier = Modifier.clickable {
-                    onBack()
-                }
-            ) {
-                Text("返回")
-            }
         }
 
         if (showFullScreen) {
@@ -363,14 +391,20 @@ private fun QRcodeView(balance: Double, onBack: () -> Unit) {
                         Box(
                             modifier = Modifier
                                 .size(360.dp)
-                                .clip(SmoothRoundedCornerShape(24.dp))
+                                .clip(
+                                    SmoothRoundedCornerShape(
+                                        24.dp
+                                    )
+                                )
                                 .background(Color.White)
                                 .padding(20.dp)
                         ) {
                             Image(
                                 bitmap = it.asImageBitmap(),
-                                contentDescription = "Full QR Code",
-                                modifier = Modifier.fillMaxSize()
+                                contentDescription =
+                                    "Full QR Code",
+                                modifier =
+                                    Modifier.fillMaxSize()
                             )
                         }
                     }
