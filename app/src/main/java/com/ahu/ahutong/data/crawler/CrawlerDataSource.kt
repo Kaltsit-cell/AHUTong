@@ -8,6 +8,7 @@ import com.ahu.ahutong.data.crawler.api.jwxt.JwxtApi
 import com.ahu.ahutong.data.crawler.api.ycard.YcardApi
 import com.ahu.ahutong.data.crawler.model.adwnh.AllCampus
 import com.ahu.ahutong.data.crawler.model.adwnh.AllLostFoundType
+import com.ahu.ahutong.data.crawler.model.adwnh.LostFoundPublishRequest
 import com.ahu.ahutong.data.crawler.model.adwnh.LostFoundResponse
 import com.ahu.ahutong.data.crawler.model.jwxt.CurrentSemester
 import com.ahu.ahutong.data.crawler.model.ycard.CardInfo
@@ -310,6 +311,17 @@ class CrawlerDataSource : BaseDataSource {
             return response
         }
     }
+    override suspend fun publishLostFound(
+        request: LostFoundPublishRequest
+    ): AHUResponse<Any> {
+        return AdwmhApi.API.publishLostFound(request)
+    }
+    override suspend fun deleteLostFound(
+        id: String
+    ): AHUResponse<Any> {
+        return AdwmhApi.API.deleteLostFound(id)
+    }
+
     override suspend fun getCardMoney(): AHUResponse<Card> {
         val card = Card()
         card.balance = AdwmhApi.API.getBalance().`object`

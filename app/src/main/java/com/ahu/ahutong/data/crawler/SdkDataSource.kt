@@ -25,6 +25,7 @@ import okhttp3.FormBody
 import okhttp3.ResponseBody
 import retrofit2.Response
 import com.ahu.ahutong.data.crawler.model.adwnh.Balance
+import com.ahu.ahutong.data.crawler.model.adwnh.LostFoundPublishRequest
 import com.ahu.ahutong.data.crawler.model.adwnh.LostFoundResponse
 import com.ahu.ahutong.data.model.GpaRankInfo
 
@@ -249,6 +250,16 @@ class SdkDataSource : BaseDataSource {
             response.msg = "解析失败：${e.message}"
             return response
         }
+    }
+    override suspend fun publishLostFound(
+        request: LostFoundPublishRequest
+    ): AHUResponse<Any> {
+        return AdwmhApi.API.publishLostFound(request)
+    }
+    override suspend fun deleteLostFound(
+        id: String
+    ): AHUResponse<Any> {
+        return AdwmhApi.API.deleteLostFound(id)
     }
     private fun convertJsToJson(js: String): String {
         return js

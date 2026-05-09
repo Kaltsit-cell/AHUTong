@@ -1,11 +1,13 @@
 package com.ahu.ahutong.data.crawler.api.adwmh
 
+import com.ahu.ahutong.data.AHUResponse
 import com.ahu.ahutong.data.crawler.manager.CookieManager
 import com.ahu.ahutong.data.crawler.model.adwnh.AllCampus
 import com.ahu.ahutong.data.crawler.model.adwnh.AllLostFoundType
 import com.ahu.ahutong.data.crawler.model.adwnh.Balance
 import com.ahu.ahutong.data.crawler.model.adwnh.Captcha
 import com.ahu.ahutong.data.crawler.model.adwnh.Info
+import com.ahu.ahutong.data.crawler.model.adwnh.LostFoundPublishRequest
 import com.ahu.ahutong.data.crawler.model.adwnh.LostFoundResponse
 import com.ahu.ahutong.data.crawler.model.adwnh.QRcode
 import com.ahu.ahutong.data.crawler.net.AutoLoginInterceptor
@@ -16,6 +18,7 @@ import okhttp3.ResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.Body
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
@@ -58,6 +61,17 @@ interface AdwmhApi {
         @Query("pageSize") pageSize: Int,
         @Query("state") state: Int
     ): LostFoundResponse//state=1是招领物品，state=2是寻找物品
+
+    @POST("lostfound/saveupdate")
+    suspend fun publishLostFound(
+        @Body request: LostFoundPublishRequest
+    ): AHUResponse<Any>
+
+    @FormUrlEncoded
+    @POST("lostfound/delete")
+    suspend fun deleteLostFound(
+        @Field("id") id: String
+    ): AHUResponse<Any>
 
     @POST
     @Multipart
